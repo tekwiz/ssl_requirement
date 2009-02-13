@@ -19,11 +19,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 module SslRequirement
+  Options = {:ignore_in_development => true}
+  
   def self.included(controller)
     controller.extend(ClassMethods)
     controller.before_filter(:ensure_proper_protocol)
   end
-
+    
+  def ignore_requirements?
+    Options[:ignore_in_development] && ENV['RAILS_ENV'] == 'development'
+  end
+    
   module ClassMethods
     # Specifies that the named actions requires an SSL connection to be performed (which is enforced by ensure_proper_protocol).
     def ssl_required(*actions)
@@ -57,7 +63,7 @@ module SslRequirement
 
   private
     def ensure_proper_protocol
-      return true if (ssl_allowed? && !ssl_required?) || ENV['RAILS_ENV'] == 'development'
+      return true if (ssl_allowed? && !ssl_required?) || ignore_requirements?
 
       if ssl_required? && !request.ssl?
         redirect_to "https://" + request.host + request.request_uri
