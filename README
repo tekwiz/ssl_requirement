@@ -62,11 +62,12 @@ Example 2 (ssl_all_allowed):
     end
   end
   
-By default, SslRequirement does do anything in development mode; however, you
-may change this by adding the following line to you your environment.rb (or an
-initializer of your choice):
+By default, SslRequirement does do anything in development mode or test mode; 
+however, you may change this by adding either or both of the following lines to
+your environment.rb (or an initializer of your choice):
 
-  SslRequirement::Options[:ignore_in_development] = false
+  SslRequirement::Options[:ignore_in_development_mode] = false
+  SslRequirement::Options[:ignore_in_test_mode] = false
   
 You can overwrite the protected method ssl_required? to rely on other things
 than just the declarative specification. Say, only premium accounts get SSL.

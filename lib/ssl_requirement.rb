@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 module SslRequirement
-  Options = {:ignore_in_development => true}
+  Options = { :ignore_in_development_mode => true, 
+                   :ignore_in_test_mode => true }
   
   def self.included(controller)
     controller.extend(ClassMethods)
@@ -27,7 +28,11 @@ module SslRequirement
   end
     
   def ignore_requirements?
-    Options[:ignore_in_development] && ENV['RAILS_ENV'] == 'development'
+    if ENV['RAILS_ENV'] == 'development'
+      Options[:ignore_in_development_mode]
+    elsif ENV['RAILS_ENV'] == 'test'
+      Options[:ignore_in_test_mode]
+    end
   end
     
   module ClassMethods
